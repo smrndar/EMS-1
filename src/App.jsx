@@ -9,6 +9,7 @@ import { AuthContext } from "./context/AuthProvider";
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const [loggedInUserData, setloggedInUserData] = useState(null);
   const authData = useContext(AuthContext);
 
   useEffect(() => {
@@ -20,7 +21,6 @@ const App = () => {
     }
   }, [authData]);
 
-  
   // console.log(authData.employees);
 
   const handleLogin = (email, password) => {
@@ -28,15 +28,17 @@ const App = () => {
       setUser("admin");
       localStorage.setItem("loggedInUser", JSON.stringify({ role: "admin" }));
       console.log(user);
-    } else if (
-      authData &&
-      authData.employees.find((e) => email == e.email && e.password == password)
-    ) {
-      setUser("employee");
-      localStorage.setItem(
-        "loggedInUser",
-        JSON.stringify({ role: "employee" })
-      );
+    } else if (authData) {
+      const employee = authData.employees.find((e) => email == e.email && e.password == password)
+      if (employee){
+        setUser("employee");
+        setloggedInUserData(employee)
+        localStorage.setItem(
+          "loggedInUser",
+          JSON.stringify({ role: "employee" })
+        );
+      }
+    
     } else {
       alert("Invalid Email and Password");
     }
@@ -51,7 +53,7 @@ const App = () => {
   return (
     <>
       {!user ? <Login handleLogin={handleLogin} /> : ""}
-      {user == "admin" ? <AdminDashboard /> : <EmployeeDashboard />}
+      {user == "admin" ? <AdminDashboard /> : (user == "employee"? <EmployeeDashboard  data={loggedInUserData} /> : null )}
       {/* <Login/> */}
       {/* <EmployeeDashboard /> */}
       {/* <AdminDashboard /> */}
