@@ -6,7 +6,6 @@ export const AuthContext = createContext()
 
 const AuthProvider = ({children}) => {
   localStorage.clear()
-
     const [userData, setUserData] = useState([])
 
    useEffect(() => {
@@ -20,7 +19,7 @@ const AuthProvider = ({children}) => {
 
     return (
     <div>
-       <AuthContext.Provider value={userData}>
+       <AuthContext.Provider value={[userData,setUserData]}>
        {children}
        </AuthContext.Provider>
     </div>
